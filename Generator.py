@@ -5,6 +5,7 @@ import random
 N_i = [100,150,50,150,80,40,250] #maximum capacity 
 t_i = [0.1, 0.15, 0.1, 0.1, 0.15, 0.1, 0.2] #picking time
 u_i = [60, 36, 42, 42, 30, 60, 90]  #refilltime
+sections = [simpy.Container(env, 100, init =100 ), simpy.Container(env, 150, init =150 ), simpy.Container(env, 50, init =50 ), simpy.Container(env, 150, init =150 ), simpy.Container(env, 80, init =80 ), simpy.Container(env, 40, init =40 ), simpy.Container(env, 250, init =250 ) ]
 
 lamda_c = 1/3
 lamda_t = 2
@@ -56,12 +57,13 @@ class Customer(object):
         self.items = 0
         while self.i < 7:
             if self.omega[self.i]>0:
-                if self.omega[self.i]<= 10: #implement stock (simpy resource)
-                    yield 
+                if self.omega[self.i]<= sections[self.i].level: 
+                    yield sections[self.i].get(self.omega[self.i])
                     yield self.timeout(self.omega[self.i]*t_i[self.i])
                     self.items+= self.omega[self.i]
                     yield self.timeout(T_t())
                     self.i+=1
+        
                         
         while self.items > 0:
             timestamp_1= self.env.now
@@ -77,16 +79,27 @@ class Customer(object):
 generateShoppingList()
 
 env = simpy.Enviroment()
-S_0 = simpy.Container(env, 100, init =100 )
-S_1 = simpy.Container(env, 150, init =150 )
-S_2 = simpy.Container(env, 50, init =50 )
-S_3 = simpy.Container(env, 150, init =150 )
-S_4 = simpy.Container(env, 80, init =80 )
-S_5 = simpy.Container(env, 40, init =40 )
-S_6 = simpy.Container(env, 250, init =250 )
+
+#hei
 
 
 
+class Employee(object):
+    def _init_(self,env):
+        self.i = 0
+        while self.i < 7:
+            yield self.timeout(T_t()) 
+            if sections[self.i].level < sections[self.i].capacity:
+                yield 
+                #put 
+            self.i += 1
+            if self.i >= 7:
+                self.i = 0
+
+            
+
+        
+        
 
 
 

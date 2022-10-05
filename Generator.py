@@ -3,128 +3,155 @@ import numpy as np
 import random
 import matplotlib.pyplot as plt
 
+list_avg_different_employees = []
 
-env = simpy.Environment()
+for z in range(1,11):
 
-N_i = [100,150,50,150,80,40,250] #maximum capacity 
-t_i = [0.1, 0.15, 0.1, 0.1, 0.15, 0.1, 0.2] #picking time
-u_i = [60, 36, 42, 42, 30, 60, 90]  #refilltime
-sections = [simpy.Container(env, 100, init =100 ), simpy.Container(env, 150, init =150 ), simpy.Container(env, 50, init =50 ), simpy.Container(env, 150, init =150 ), simpy.Container(env, 80, init =80 ), simpy.Container(env, 40, init =40 ), simpy.Container(env, 250, init =250 ) ]
-Counters = simpy.Resource(env, 4)
-Sections = simpy.Resource(env,6)
-simTime = 1*60
-mosList = []
-mosListAvg = []
+    print(z)
+    env = simpy.Environment()
 
-
-n_employees = 1
-p_i = 0.05 * n_employees    #number of employees actually working, threshold value
-lamda_c = 1/3
-lamda_t = 2
-N_7 = 4
-t_7s = 0.1
-t_7p = 0.2
-
-#create random shopping list
-def generateShoppingList():
-    omega = []
-    for i in range(0,7):
-        x = random.randint(0,5)
-        omega.append(x)
-    print("Shoppinglist:")
-    print(omega)
-    return omega
-
-#return MOS number based on cicumstanses 
-def generateMos(v, T_q):
-    if (v==1) and (T_q==0):
-        return 5
-    
-    if (v>0.9) and (T_q<0.3):
-        return 4
-
-    if (v>0.8) and (T_q<0.6):
-        return 3
-    
-    if (v>0.7) and (T_q <1):
-        return 2
-    
-    else:
-        return 1
+    N_i = [100,150,50,150,80,40,250] #maximum capacity 
+    t_i = [0.1, 0.15, 0.1, 0.1, 0.15, 0.1, 0.2] #picking time
+    u_i = [60, 36, 42, 42, 30, 60, 90]  #refilltime
+    sections = [simpy.Container(env, 100, init =100 ), simpy.Container(env, 150, init =150 ), simpy.Container(env, 50, init =50 ), simpy.Container(env, 150, init =150 ), simpy.Container(env, 80, init =80 ), simpy.Container(env, 40, init =40 ), simpy.Container(env, 250, init =250 ) ]
+    Counters = simpy.Resource(env, 4)
+    Sections = simpy.Resource(env,6)
+    simTime = 16*60
+    mosList = []
+    mosListAvg = []
 
 
-#as long as true, create new customer object with interval 1/lamda_c
-def customerGenerator(env):
-    while True:
-        new_customer = Customer(env)
-        env.process(new_customer)
-        yield env.timeout(np.random.exponential(1/lamda_c)) #maybe poison
+    n_employees = z
+    p_i = 0.05 * n_employees    #number of employees actually working, threshold value
+    lamda_c = 1/3
+    lamda_t = 2
+    N_7 = 4
+    t_7s = 0.1
+    t_7p = 0.2
+
+    #create random shopping list
+    def generateShoppingList():
+        omega = []
+        for i in range(0,7):
+            x = random.randint(0,5)
+            omega.append(x)
+        return omega
+
+    #return MOS number based on cicumstanses 
+    def generateMos(v, T_q):
+        if (v==1) and (T_q==0):
+            return 5
+        
+        if (v>0.9) and (T_q<0.3):
+            return 4
+
+        if (v>0.8) and (T_q<0.6):
+            return 3
+        
+        if (v>0.7) and (T_q <1):
+            return 2
+        
+        else:
+            return 1
 
 
-
-#time it takes to walk inbetween sections       
-def T_t():
-    return np.random.exponential(1/lamda_t)
-
-
-def Customer(env):
-    omega = generateShoppingList()
-    total_items = sum(omega)
-    i = 0  
-    items = 0
-    while i < 7:
-        if omega[i] > 0:
-            if omega[i] <= sections[i].level: 
-                yield sections[i].get(omega[i])
-                yield env.timeout(omega[i]*t_i[i])
-                items += omega[i]
-                
-        yield env.timeout(T_t())
-        i += 1 
-    
-    with Counters.request() as req:
-        queue_start = env.now
-        yield req
-        timestamp_2 = env.now
-        T_q = timestamp_2-queue_start
-        if items > 0:
-            yield env.timeout(t_7s*items)
-            yield env.timeout(t_7p)
-
-    v = items/total_items
-    mosList.append(generateMos(v,T_q))
-    mosListAvg.append(sum(mosList)/len(mosList))
-    print("Avg. MOS:")
-    print(sum(mosList)/len(mosList))            
+    #as long as true, create new customer object with interval 1/lamda_c
+    def customerGenerator(env):
+        while True:
+            new_customer = Customer(env)
+            env.process(new_customer)
+            yield env.timeout(np.random.exponential(1/lamda_c)) #maybe poison
 
 
 
+    #time it takes to walk inbetween sections       
+    def T_t():
+        return np.random.exponential(1/lamda_t)
 
-def Employee(env):
-    i = 0
-    while i < 7:
-        yield env.timeout(T_t())
-        with Sections.request() as req:
+
+    def Customer(env):
+        omega = generateShoppingList()
+        total_items = sum(omega)
+        i = 0  
+        items = 0
+        while i < 7:
+            if omega[i] > 0:
+                if omega[i] <= sections[i].level: 
+                    yield sections[i].get(omega[i])
+                    yield env.timeout(omega[i]*t_i[i])
+                    items += omega[i]
+                    
+            yield env.timeout(T_t())
+            i += 1 
+        
+        with Counters.request() as req:
+            queue_start = env.now
             yield req
-            if sections[i].level < sections[i].capacity * p_i:
-                yield sections[i].put(sections[i].capacity - sections[i].level)
-                yield env.timeout(u_i[i])
-            i += 1
-            if i >= 7:
-                i = 0
+            timestamp_2 = env.now
+            T_q = timestamp_2-queue_start
+            if items > 0:
+                yield env.timeout(t_7s*items)
+                yield env.timeout(t_7p)
+
+        v = items/total_items
+        mosList.append(generateMos(v,T_q))
+        mosListAvg.append(sum(mosList)/len(mosList))           
 
 
 
 
-env.process(customerGenerator(env))
-for y in range(1, n_employees):
-    env.process(Employee(env))
+    def Employee(env):
+        i = 0
+        while i < 7:
+            yield env.timeout(T_t())
+            with Sections.request() as req:
+                yield req
+                if sections[i].level < sections[i].capacity * p_i:
+                    yield sections[i].put(sections[i].capacity - sections[i].level)
+                    yield env.timeout(u_i[i])
+                i += 1
+                if i >= 7:
+                    i = 0
 
-env.run(until=simTime)
-print("MOS List Avg.:")
-print(mosListAvg)
-ypoints = np.array(mosListAvg)
-plt.plot(ypoints, color = 'r')
+
+
+
+    env.process(customerGenerator(env))
+    for y in range(1, n_employees):
+        env.process(Employee(env))
+
+    env.run(until=simTime)
+    #print("MOS List Avg.:")
+    #print(mosListAvg)
+    list_avg_different_employees.append(mosListAvg)
+
+
+print(list_avg_different_employees)
+
+y0 = np.array(list_avg_different_employees[0])
+y1 = np.array(list_avg_different_employees[1])
+y2 = np.array(list_avg_different_employees[2])
+y3 = np.array(list_avg_different_employees[3])
+y4 = np.array(list_avg_different_employees[4])
+y5 = np.array(list_avg_different_employees[5])
+y6 = np.array(list_avg_different_employees[6])
+y7 = np.array(list_avg_different_employees[7])
+y8 = np.array(list_avg_different_employees[8])
+y9 = np.array(list_avg_different_employees[9])
+
+
+
+plt.plot(y0)
+plt.plot(y1)
+plt.plot(y2)
+plt.plot(y3)
+plt.plot(y4)
+plt.plot(y5)
+plt.plot(y6)
+plt.plot(y7)
+plt.plot(y8)
+plt.plot(y9)
+
 plt.xlabel("Number of customers")
 plt.ylabel("MOS")
 plt.show()

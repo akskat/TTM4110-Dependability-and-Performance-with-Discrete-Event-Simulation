@@ -2,14 +2,14 @@ import simpy
 import numpy as np
 import random
 
-env = simpy.Enviroment()
+env = simpy.Environment()
 
 N_i = [100,150,50,150,80,40,250] #maximum capacity 
 t_i = [0.1, 0.15, 0.1, 0.1, 0.15, 0.1, 0.2] #picking time
 u_i = [60, 36, 42, 42, 30, 60, 90]  #refilltime
 sections = [simpy.Container(env, 100, init =100 ), simpy.Container(env, 150, init =150 ), simpy.Container(env, 50, init =50 ), simpy.Container(env, 150, init =150 ), simpy.Container(env, 80, init =80 ), simpy.Container(env, 40, init =40 ), simpy.Container(env, 250, init =250 ) ]
 Counters = simpy.Resource(env, 4)
-Sections = simpy.resource(env,6)
+Sections = simpy.Resource(env,6)
 simTime = 16*60
 customer = 0
 mosList = []
@@ -53,7 +53,6 @@ def generateMos(v, T_q):
 def customerGenerator(env):
     #customer = 0
     while True:
-        customer +=1
         customer = Customer(env)
         yield env.timeout(np.random.exponential(1/lamda_c)) #maybe poison
 
@@ -124,11 +123,6 @@ env.run(until=simTime)
 
 
 
-            
-
-        
-# spørsmål:
-# Skal vi implementere funksjonalitet for at en kunde kan forlate butikken når som helst 
 
 
 

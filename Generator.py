@@ -1,6 +1,8 @@
 import simpy
 import numpy as np
 import random
+import matplotlib.pyplot as plt
+
 
 env = simpy.Environment()
 
@@ -10,8 +12,9 @@ u_i = [60, 36, 42, 42, 30, 60, 90]  #refilltime
 sections = [simpy.Container(env, 100, init =100 ), simpy.Container(env, 150, init =150 ), simpy.Container(env, 50, init =50 ), simpy.Container(env, 150, init =150 ), simpy.Container(env, 80, init =80 ), simpy.Container(env, 40, init =40 ), simpy.Container(env, 250, init =250 ) ]
 Counters = simpy.Resource(env, 4)
 Sections = simpy.Resource(env,6)
-simTime = 16*60
+simTime = 1*60
 mosList = []
+mosListAvg = []
 
 
 n_employees = 1
@@ -28,6 +31,7 @@ def generateShoppingList():
     for i in range(0,7):
         x = random.randint(0,5)
         omega.append(x)
+    print("Shoppinglist:")
     print(omega)
     return omega
 
@@ -89,7 +93,8 @@ def Customer(env):
 
     v = items/total_items
     mosList.append(generateMos(v,T_q))
-    
+    mosListAvg.append(sum(mosList)/len(mosList))
+    print("Avg. MOS:")
     print(sum(mosList)/len(mosList))            
 
 
@@ -116,6 +121,13 @@ for y in range(1, n_employees):
     env.process(Employee(env))
 
 env.run(until=simTime)
+print("MOS List Avg.:")
+print(mosListAvg)
+ypoints = np.array(mosListAvg)
+plt.plot(ypoints, color = 'r')
+plt.xlabel("Number of customers")
+plt.ylabel("MOS")
+plt.show()
 
 
 

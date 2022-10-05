@@ -10,6 +10,7 @@ u_i = [60, 36, 42, 42, 30, 60, 90]  #refilltime
 sections = [simpy.Container(env, 100, init =100 ), simpy.Container(env, 150, init =150 ), simpy.Container(env, 50, init =50 ), simpy.Container(env, 150, init =150 ), simpy.Container(env, 80, init =80 ), simpy.Container(env, 40, init =40 ), simpy.Container(env, 250, init =250 ) ]
 n_counters = 4;
 Counters = simpy.Resource(env, 4)
+time_in_queue = {"C1": [], "C2": [], "C3": [], "C4": []}
 
 n_employees = 10
 p_i = 0.05 * n_employees    #number of employees actually working, threshold value
@@ -80,11 +81,15 @@ class Customer(object):
             with Counters.request() as req:
                 queue_start = env.now
                 yield req
+                timestamp_2= self.env.now
+                T_q = timestamp_2-timestamp_1
+                yield self.timeout(T_q)
+
+                
             #implement timer here, does not need to release
             #excerise 5 
 
-            timestamp_2= self.env.now
-            T_q=timestamp_2-timestamp_1
+            
             yield self.timeout(t_7s*self.items)
             yield self.timeout(t_7p)
             #implement release cashier
@@ -120,7 +125,6 @@ generateShoppingList()
 
         
 # spørsmål:
-# Skal vi implementere funksjonalitet for flasker, skal for eksempel ikke "get" flaske
 # Skal vi implementere funksjonalitet for at en kunde kan forlate butikken når som helst 
 
 

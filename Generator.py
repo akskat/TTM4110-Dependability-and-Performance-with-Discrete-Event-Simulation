@@ -8,7 +8,6 @@ N_i = [100,150,50,150,80,40,250] #maximum capacity
 t_i = [0.1, 0.15, 0.1, 0.1, 0.15, 0.1, 0.2] #picking time
 u_i = [60, 36, 42, 42, 30, 60, 90]  #refilltime
 sections = [simpy.Container(env, 100, init =100 ), simpy.Container(env, 150, init =150 ), simpy.Container(env, 50, init =50 ), simpy.Container(env, 150, init =150 ), simpy.Container(env, 80, init =80 ), simpy.Container(env, 40, init =40 ), simpy.Container(env, 250, init =250 ) ]
-n_counters = 4;
 Counters = simpy.Resource(env, 4)
 time_in_queue = {"C1": [], "C2": [], "C3": [], "C4": []}
 
@@ -76,22 +75,22 @@ class Customer(object):
 
                         
         while self.items > 0:
-            timestamp_1= self.env.now
             #implement aquire 
             with Counters.request() as req:
-                queue_start = env.now
+                queue_start = self.env.now
                 yield req
                 timestamp_2= self.env.now
-                T_q = timestamp_2-timestamp_1
-                yield self.timeout(T_q)
+                T_q = timestamp_2-queue_start
+                yield self.timeout(t_7s*self.items)
+                yield self.timeout(t_7p)
+                
 
                 
             #implement timer here, does not need to release
             #excerise 5 
 
             
-            yield self.timeout(t_7s*self.items)
-            yield self.timeout(t_7p)
+            
             #implement release cashier
 
 

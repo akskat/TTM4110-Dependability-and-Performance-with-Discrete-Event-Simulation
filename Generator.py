@@ -19,6 +19,7 @@ for z in range(1,11):
     simTime = 16*60
     mosList = []
     mosListAvg = []
+    nrEmployees = [1,2,3,4,5,6,7,8,9,10]
 
 
     n_employees = z
@@ -95,7 +96,7 @@ for z in range(1,11):
 
         v = items/total_items
         mosList.append(generateMos(v,T_q))
-        mosListAvg.append(sum(mosList)/len(mosList))           
+        #mosListAvg.append(sum(mosList)/len(mosList))           
 
 
 
@@ -123,36 +124,23 @@ for z in range(1,11):
     env.run(until=simTime)
     #print("MOS List Avg.:")
     #print(mosListAvg)
-    list_avg_different_employees.append(mosListAvg)
+    #mosListAvg.append(sum(mosList)/len(mosList))
+    list_avg_different_employees.append(sum(mosList)/len(mosList))
 
 
+#print(list_avg_different_employees)
+
+print("avg: ")
+#print(mosListAvg)
 print(list_avg_different_employees)
 
-y0 = np.array(list_avg_different_employees[0])
-y1 = np.array(list_avg_different_employees[1])
-y2 = np.array(list_avg_different_employees[2])
-y3 = np.array(list_avg_different_employees[3])
-y4 = np.array(list_avg_different_employees[4])
-y5 = np.array(list_avg_different_employees[5])
-y6 = np.array(list_avg_different_employees[6])
-y7 = np.array(list_avg_different_employees[7])
-y8 = np.array(list_avg_different_employees[8])
-y9 = np.array(list_avg_different_employees[9])
+x = np.array(nrEmployees)
+y = np.array(list_avg_different_employees)
+
+plt.bar(x,y)
 
 
-
-plt.plot(y0)
-plt.plot(y1)
-plt.plot(y2)
-plt.plot(y3)
-plt.plot(y4)
-plt.plot(y5)
-plt.plot(y6)
-plt.plot(y7)
-plt.plot(y8)
-plt.plot(y9)
-
-plt.xlabel("Number of customers")
+plt.xlabel("Number of employees")
 plt.ylabel("MOS")
 plt.show()
 

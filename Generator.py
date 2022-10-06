@@ -5,6 +5,7 @@ import random
 import matplotlib.pyplot as plt
 
 simulation_avg = []
+lists_of_simulations = []
 
 for z in range(1,21):
     print(z)
@@ -118,7 +119,7 @@ for z in range(1,21):
                             #yield env.timeout(u_i[i])
                 i += 1
                 if i >= 7:
-                    i = 0
+                    i = 0       
         env.process(customerGenerator(env))
         for y in range(1, n_employees):
             env.process(Employee(env))
@@ -130,6 +131,7 @@ for z in range(1,21):
         #mosListAvg.append(sum(mosList)/len(mosList))
         list_avg_different_employees.append(sum(mosList)/len(mosList))
     simulation_avg.append(sum(list_avg_different_employees)/len(list_avg_different_employees))
+    lists_of_simulations.append(list_avg_different_employees)
 
 
 #print(list_avg_different_employees)
@@ -138,24 +140,36 @@ print("avg: ")
 #print(mosListAvg)
 print(simulation_avg)
 
-x = np.array(nrEmployees)
-y = np.array(simulation_avg)
 
-plt.bar(x,y)
-plt.xticks(x)
+def normal_graph():
+    x = np.array(nrEmployees)
+    y = np.array(simulation_avg)
+    plt.bar(x,y)
+    plt.xticks(x)
+    def addLabels(x,y):
+        for i in range(0,20):
+            plt.text(i+1,y[i]+0.05,round(y[i],3), ha = 'center')
+    addLabels(x,y)
+    plt.xlabel("Number of employees")
+    plt.ylabel("MOS")
+    plt.show()
 
 
-def addLabels(x,y):
-    for i in range(0,20):
-        
-        plt.text(i+1,y[i]+0.05,round(y[i],3), ha = 'center')
+def box_graph():
+    fig = plt.figure(figsize =(10, 7))
 
-addLabels(x,y)
 
-plt.xlabel("Number of employees")
-plt.ylabel("MOS")
-plt.show()
+    # Creating plot
+    plt.boxplot(lists_of_simulations)
 
+    
+
+    plt.xlabel("Number of employees")
+    plt.ylabel("MOS")
+    plt.show()
+
+normal_graph()
+box_graph()
 
 
 

@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 list_avg_different_employees = []
 
-for z in range(1,11):
+for z in range(1,21):
 
     print(z)
     env = simpy.Environment()
@@ -19,7 +19,7 @@ for z in range(1,11):
     simTime = 16*60
     mosList = []
     mosListAvg = []
-    nrEmployees = [1,2,3,4,5,6,7,8,9,10]
+    nrEmployees = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
 
 
     n_employees = z
@@ -98,25 +98,20 @@ for z in range(1,11):
         mosList.append(generateMos(v,T_q))
         #mosListAvg.append(sum(mosList)/len(mosList))           
 
-
-
-
     def Employee(env):
         i = 0
         while i < 7:
-            yield env.timeout(T_t())
+            yield env.timeout(T_t())            
+            #if Sections.count < 1:
             with Sections.request() as req:
                 yield req
                 if sections[i].level < sections[i].capacity * p_i:
+                    #yield env.timeout(u_i[i])
                     yield sections[i].put(sections[i].capacity - sections[i].level)
                     yield env.timeout(u_i[i])
                 i += 1
                 if i >= 7:
                     i = 0
-
-
-
-
     env.process(customerGenerator(env))
     for y in range(1, n_employees):
         env.process(Employee(env))
@@ -142,7 +137,7 @@ plt.xticks(x)
 
 
 def addLabels(x,y):
-    for i in range(0,10):
+    for i in range(0,20):
         
         plt.text(i+1,y[i]+0.05,round(y[i],3), ha = 'center')
 

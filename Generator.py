@@ -1,3 +1,4 @@
+from importlib import resources
 import simpy
 import numpy as np
 import random
@@ -14,8 +15,9 @@ for z in range(1,21):
     t_i = [0.1, 0.15, 0.1, 0.1, 0.15, 0.1, 0.2] #picking time
     u_i = [60, 36, 42, 42, 30, 60, 90]  #refilltime
     sections = [simpy.Container(env, 100, init =100 ), simpy.Container(env, 150, init =150 ), simpy.Container(env, 50, init =50 ), simpy.Container(env, 150, init =150 ), simpy.Container(env, 80, init =80 ), simpy.Container(env, 40, init =40 ), simpy.Container(env, 250, init =250 ) ]
+    employeeResources = [simpy.Resource(env,1),simpy.Resource(env,1),simpy.Resource(env,1),simpy.Resource(env,1),simpy.Resource(env,1),simpy.Resource(env,1),simpy.Resource(env,1)]
     Counters = simpy.Resource(env, 4)
-    Sections = simpy.Resource(env,6)
+    #Sections = simpy.Resource(env,6)
     simTime = 16*60
     mosList = []
     mosListAvg = []
@@ -102,19 +104,20 @@ for z in range(1,21):
         i = 0
         while i < 7:
             yield env.timeout(T_t())            
-            #if Sections.count < 1:
-            with Sections.request() as req:
-                yield req
-                if sections[i].level < sections[i].capacity * p_i:
-                    #yield env.timeout(u_i[i])
-                    yield sections[i].put(sections[i].capacity - sections[i].level)
-                    yield env.timeout(u_i[i])
-                i += 1
-                if i >= 7:
-                    i = 0
+            if employeeResources[i].count < 1:
+                with employeeResources[i].request() as req:
+                    yield req
+                    if sections[i].level < sections[i].capacity * p_i:
+                        yield env.timeout(u_i[i])
+                        yield sections[i].put(sections[i].capacity - sections[i].level)
+                        #yield env.timeout(u_i[i])
+            i += 1
+            if i >= 7:
+                i = 0
     env.process(customerGenerator(env))
     for y in range(1, n_employees):
         env.process(Employee(env))
+
 
     env.run(until=simTime)
     #print("MOS List Avg.:")

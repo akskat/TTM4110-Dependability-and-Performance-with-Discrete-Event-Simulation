@@ -138,7 +138,15 @@ x = np.array(nrEmployees)
 y = np.array(list_avg_different_employees)
 
 plt.bar(x,y)
+plt.xticks(x)
 
+
+def addLabels(x,y):
+    for i in range(0,10):
+        
+        plt.text(i+1,y[i]+0.05,round(y[i],3), ha = 'center')
+
+addLabels(x,y)
 
 plt.xlabel("Number of employees")
 plt.ylabel("MOS")

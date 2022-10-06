@@ -78,13 +78,14 @@ for z in range(1,21):
         i = 0  
         items = 0
         while i < 7:
+            yield env.timeout(T_t())
             if omega[i] > 0:
                 if omega[i] <= sections[i].level: 
                     yield sections[i].get(omega[i])
                     yield env.timeout(omega[i]*t_i[i])
                     items += omega[i]
                     
-            yield env.timeout(T_t())
+            #yield env.timeout(T_t())
             i += 1 
         
         with Counters.request() as req:
@@ -93,7 +94,7 @@ for z in range(1,21):
             timestamp_2 = env.now
             T_q = timestamp_2-queue_start
             if items > 0:
-                yield env.timeout(t_7s*items)
+                yield env.timeout(t_7s * items)
                 yield env.timeout(t_7p)
 
         v = items/total_items

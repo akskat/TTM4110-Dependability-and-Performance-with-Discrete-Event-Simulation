@@ -8,27 +8,20 @@ simulation_avg = []
 lists_of_simulations = []
 
 for z in range(1,21):
-    print(z)
     list_avg_different_employees = []
-
-    for i in range(1,21):
-
-        
+    print(z , "employees: 30 simulations")
+    for i in range(1,31):
         env = simpy.Environment()
-
         N_i = [100,150,50,150,80,40,250] #maximum capacity 
         t_i = [0.1, 0.15, 0.1, 0.1, 0.15, 0.1, 0.2] #picking time
         u_i = [60, 36, 42, 42, 30, 60, 90]  #refilltime
         sections = [simpy.Container(env, 100, init =100 ), simpy.Container(env, 150, init =150 ), simpy.Container(env, 50, init =50 ), simpy.Container(env, 150, init =150 ), simpy.Container(env, 80, init =80 ), simpy.Container(env, 40, init =40 ), simpy.Container(env, 250, init =250 ) ]
         employeeResources = [simpy.Resource(env,1),simpy.Resource(env,1),simpy.Resource(env,1),simpy.Resource(env,1),simpy.Resource(env,1),simpy.Resource(env,1),simpy.Resource(env,1)]
         Counters = simpy.Resource(env, 4)
-        #Sections = simpy.Resource(env,6)
         simTime = 16*60
         mosList = []
         mosListAvg = []
         nrEmployees = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
-
-
         n_employees = z
         p_i = 0.05 * n_employees    #number of employees actually working, threshold value
         lamda_c = 1/3
@@ -49,16 +42,12 @@ for z in range(1,21):
         def generateMos(v, T_q):
             if (v==1) and (T_q==0):
                 return 5
-            
             if (v>0.9) and (T_q<0.3):
                 return 4
-
             if (v>0.8) and (T_q<0.6):
                 return 3
-            
             if (v>0.7) and (T_q <1):
                 return 2
-            
             else:
                 return 1
 
@@ -126,50 +115,40 @@ for z in range(1,21):
 
 
         env.run(until=simTime)
-        #print("MOS List Avg.:")
-        #print(mosListAvg)
-        #mosListAvg.append(sum(mosList)/len(mosList))
         list_avg_different_employees.append(sum(mosList)/len(mosList))
     simulation_avg.append(sum(list_avg_different_employees)/len(list_avg_different_employees))
     lists_of_simulations.append(list_avg_different_employees)
 
 
-#print(list_avg_different_employees)
-
-print("avg: ")
-#print(mosListAvg)
+print("avg per employee after 20 simulations: ")
 print(simulation_avg)
 
 
-def normal_graph():
+def bar_plot_graph():
     x = np.array(nrEmployees)
     y = np.array(simulation_avg)
     plt.bar(x,y)
     plt.xticks(x)
     def addLabels(x,y):
         for i in range(0,20):
-            plt.text(i+1,y[i]+0.05,round(y[i],3), ha = 'center')
+            plt.text(i+1,y[i]+0.05,round(y[i],2), ha = 'center')
     addLabels(x,y)
+    plt.title("30 simulations")
     plt.xlabel("Number of employees")
     plt.ylabel("MOS")
     plt.show()
 
 
-def box_graph():
+def box_plot_graph():
     fig = plt.figure(figsize =(10, 7))
-
-
-    # Creating plot
     plt.boxplot(lists_of_simulations)
-
-    
-
+    plt.title("30 simulations")
     plt.xlabel("Number of employees")
     plt.ylabel("MOS")
     plt.show()
 
-normal_graph()
-box_graph()
+bar_plot_graph()
+box_plot_graph()
 
 
 

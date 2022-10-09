@@ -68,16 +68,22 @@ for z in range(1,21):
 
         def Customer(env):
             omega = generateShoppingList()
-            total_items = sum(omega)
+            total_items = (sum(omega) - omega[0] + 1)
+            total_items2 = sum(omega)
             i = 0  
             items = 0
+            items2 = 0
             while i < 7:
                 yield env.timeout(T_t())
                 if omega[i] > 0:
                     if omega[i] <= sections[i].level: 
                         yield sections[i].get(omega[i])
                         yield env.timeout(omega[i]*t_i[i])
-                        items += omega[i]
+                        items2 += omega[i]
+                        if i == 0:
+                            items += 1
+                        elif i != 0:
+                            items += omega[i]
                         
                 #yield env.timeout(T_t())
                 i += 1 
@@ -91,7 +97,7 @@ for z in range(1,21):
                     yield env.timeout(t_7s * items)
                     yield env.timeout(t_7p)
 
-            v = items/total_items
+            v = items2/total_items2
             mosList.append(generateMos(v,T_q))
             #mosListAvg.append(sum(mosList)/len(mosList))           
 

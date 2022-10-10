@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 
 simulation_avg = []
 lists_of_simulations = []
-
+print("If the code gives a divided by zero error; run again")
 for z in range(1,21):
     list_avg_different_employees = []
     print(z , "employees: 30 simulations")
@@ -36,6 +36,10 @@ for z in range(1,21):
             for i in range(0,7):
                 x = random.randint(0,5)
                 omega.append(x)
+            while sum(omega) == 0:
+                for i in range(0,7):
+                    x = random.randint(0,5)
+                    omega.append(x)
             return omega
 
         #return MOS number based on cicumstanses 
@@ -68,7 +72,6 @@ for z in range(1,21):
 
         def Customer(env):
             omega = generateShoppingList()
-            total_items = (sum(omega) - omega[0] + 1)
             total_items2 = sum(omega)
             i = 0  
             items = 0
@@ -84,10 +87,7 @@ for z in range(1,21):
                             items += 1
                         elif i != 0:
                             items += omega[i]
-                        
-                #yield env.timeout(T_t())
                 i += 1 
-            
             with Counters.request() as req:
                 queue_start = env.now
                 yield req
@@ -96,10 +96,8 @@ for z in range(1,21):
                 if items > 0:
                     yield env.timeout(t_7s * items)
                     yield env.timeout(t_7p)
-
             v = items2/total_items2
-            mosList.append(generateMos(v,T_q))
-            #mosListAvg.append(sum(mosList)/len(mosList))           
+            mosList.append(generateMos(v,T_q))           
 
         def Employee(env):
             i = 0
@@ -114,7 +112,8 @@ for z in range(1,21):
                             #yield env.timeout(u_i[i])
                 i += 1
                 if i >= 7:
-                    i = 0       
+                    i = 0
+
         env.process(customerGenerator(env))
         for y in range(1, n_employees):
             env.process(Employee(env))
@@ -156,6 +155,9 @@ def box_plot_graph():
 bar_plot_graph()
 box_plot_graph()
 
+
+
+# source: https://simpy.readthedocs.io/en/latest/examples/gas_station_refuel.html?fbclid=IwAR0HUGQIf0_76r91vCFj9CnSMlGaqqvMJiWtNXAW0uaRTOrTP_xSp8oMsow
 
 
 

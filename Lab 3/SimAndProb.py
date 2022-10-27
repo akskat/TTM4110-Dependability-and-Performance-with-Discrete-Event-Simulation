@@ -130,87 +130,6 @@ print(simulation_avg)
 
 
 
-list_avg_diff_emp = []
-
-
-for emp in range(1, 20):
-
-    average = []
-
-    for i in range(0, 7):
-        #special case for section 5 where the threshold value is 2 which causes problems for the model
-        if (i == 5):
-            lambda_p=1
-            n_employees = emp
-            p_i = 0.05 * n_employees 
-            N_i = [100, 150, 50, 150, 80, 40, 250]
-            u_i = [60, 36, 42, 42, 30, 60, 90]
-            my = 1/u_i[i]
-            lambda_0 = lambda_p / ( N_i[i] - (p_i * N_i[i]) )
-
-            p_0 = -lambda_p / (N_i[i] * p_i * my - N_i[i] * my - lambda_p)
-            p_1 = (N_i[i] * p_i * - N_i[i] * my) / (N_i[i] * p_i * my - N_i[i] * my - lambda_p)
-
-            v = 1 - p_0
-
-            def generateMos(v):
-                        if (v==1):
-                            return 5
-                        if (v>0.9):
-                            return 4
-                        if (v>0.8):
-                            return 3
-                        if (v>0.7):
-                            return 2
-                        else:
-                            return 1
-
-            MOS_score = generateMos(v)
-            average.append(MOS_score)
-        #all the other sections
-        else: 
-            lambda_p=1
-            n_employees = emp
-            p_i = 0.05 * n_employees 
-            N_i = [100, 150, 50, 150, 80, 40, 250]
-            u_i = [60, 36, 42, 42, 30, 60, 90]
-            my = 1/u_i[i]
-            lambda_0 = lambda_p / ( (p_i * N_i[i]) - 2 )
-            lambda_1 = lambda_p / ( N_i[i] - (p_i * N_i[i]) )
-
-            p_0 = (lambda_0 * lambda_1 / ((lambda_0 * lambda_1) + (lambda_0 * my) + (lambda_1 * my) + my**(2)))
-            p_1 = (lambda_1 * my / ((lambda_0 * lambda_1) + (lambda_0 * my) + (lambda_1 * my) + my**(2)))
-            p_2 = my / (lambda_1 + my)
-
-            v = 1 - p_0
-
-            def generateMos(v):
-                        if (v==1):
-                            return 5
-                        if (v>0.9):
-                            return 4
-                        if (v>0.8):
-                            return 3
-                        if (v>0.7):
-                            return 2
-                        else:
-                            return 1
-            MOS_score = generateMos(v)
-            average.append(MOS_score)
-
-
-    avg_per_emp = sum(average)/len(average)
-    print("For employees:", emp, "Average MOS-score is ", avg_per_emp)
-    list_avg_diff_emp.append(avg_per_emp)
-
-
-print(list_avg_diff_emp)
-
-
-
-
-
-
 
 def calculate_Mos(v):
     if (v==1):
@@ -261,15 +180,6 @@ for emp in range(1, 19):
     avg_mos_employee.append(avg_mos)
 
 print(avg_mos_employee)
-
-
-
-
-
-
-
-
-
 
 def bar_plot_graph():
     x = np.array(nrEmployees)

@@ -1,9 +1,6 @@
 
 #Task C without plots
 
-
-
-
 def calculate_Mos(v):
     if (v==1):
         return 5
@@ -47,9 +44,6 @@ for emp in range(1, 19):
         v = round((1 - p_0),2)
         MOS_score = calculate_Mos(v)
         list_mos_sections.append(MOS_score)
-        if (i==1):
-            print(MOS_score)
-
         
     avg_mos = sum(list_mos_sections)/len(list_mos_sections)
     avg_mos_employee.append(avg_mos)
@@ -57,11 +51,6 @@ for emp in range(1, 19):
 print(avg_mos_employee)
 
 
-    
-                
-    
-    
-    
 
 
 

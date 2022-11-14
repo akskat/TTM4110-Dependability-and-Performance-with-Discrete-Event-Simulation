@@ -143,7 +143,7 @@ def calculate_Mos(v):
     else:
         return 1
 
-avg_mos_employee = []
+avg_mos_employee = [0]
 
 # when number of employees is more than 18 the results gets unstable therefore we only go up to 18
 for emp in range(1, 19):
@@ -198,7 +198,7 @@ def bar_plot_graph():
 
 def box_plot_graph():
     fig = plt.figure(figsize =(10, 7))
-    plt.boxplot(lists_of_simulations, list_avg_diff_emp)
+    plt.boxplot(lists_of_simulations)
     ypoints = np.array(avg_mos_employee)
     plt.plot(ypoints, color = 'r')
     plt.title("30 simulations")

@@ -42,8 +42,10 @@ for i in range(0, 7):
     v = round((1 - p_0),2)
     MOS_score = calculate_Mos(v)
     list_mos_sections.append(MOS_score)
+    
 
 print(list_mos_sections)
+print(sum(list_mos_sections)/len(list_mos_sections))
     
 
 

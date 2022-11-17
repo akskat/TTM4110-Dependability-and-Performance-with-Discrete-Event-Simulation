@@ -9,7 +9,7 @@ for p in range(0,t+1):
 
 
 lambda_p = 1
-emp = 1
+emp = 15
 p_i = 0.05 * emp 
 N_i = [100, 150, 50, 150, 80, 40, 250]
 u_i = [60, 36, 42, 42, 30, 60, 90]
@@ -31,7 +31,7 @@ def R(t):
         list.append(exp_total)
         i+=1
     return list
-print(R(t))
+
 
 x = np.array(timelist)
 y = np.array(R(t))
@@ -41,3 +41,5 @@ plt.title("Reliability for time (one employee)")
 plt.xlabel("Time")
 plt.ylabel("Reliability")
 plt.show()
+
+print(R(t)[60])

@@ -6,18 +6,17 @@ import matplotlib.pyplot as plt
 
 
 env = simpy.Environment()
-Counters = simpy.PreemptiveResource(env, 4) #er dette riktig? Var før kun Resource
+Counters = simpy.PriorityResource(env, 4) #er dette riktig? Var før kun Resource
+repairman = simpy.Resource(env, 1)
 simTime = 500000 #number of employees actually working, threshold value
 lamda_c = 1/3
-lambda_failure = 4/(4*60)
+lambda_failure=4/(4*60)
 lambda_repair = 1/(15)
 lambda_T_co = 1/2
 Q_time = []
 availability_counter = []
 down_time = 0
 down_time_list = []
-
-
 
 #as long as true, create new customer object with interval 1/lamda_c
 def customerGenerator(env):
@@ -34,13 +33,14 @@ def failureGenerator(env):
 
 
 def Customer(env):
-    with Counters.request() as req:
+    with Counters.request(priority=0) as req:
         queue_start = env.now
         yield req
         timestamp_2 = env.now
         T_q = timestamp_2-queue_start
         Q_time.append(T_q)
         yield env.timeout(np.random.exponential(1/lambda_T_co))
+        
     
 
 def Failure(env):
@@ -49,9 +49,11 @@ def Failure(env):
     T_A2 = 0
     if (len(availability_counter) > 3):
         T_A1 = env.now
-    with Counters.request(priority=0, preempt=True) as req:
+    with Counters.request(priority=-1) as req:
         yield req
-        yield env.timeout(np.random.exponential(1/lambda_repair)) 
+        with repairman.request() as req:
+            yield req
+        yield env.timeout(np.random.exponential(1/lambda_repair))
     del availability_counter[0]
     if (len(availability_counter) >= 3):
         T_A2 = env.now

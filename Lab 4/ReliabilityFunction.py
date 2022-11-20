@@ -1,16 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 t = 2*60
 timelist = []
 for p in range(0,t+1):
     timelist.append(p)
-
-
 lambda_p = 1
-emp = 15
-p_i = 0.05 * emp 
 N_i = [100, 150, 50, 150, 80, 40, 250]
 u_i = [60, 36, 42, 42, 30, 60, 90]
 
@@ -32,14 +27,17 @@ def R(t):
         i+=1
     return list
 
-
 x = np.array(timelist)
 y = np.array(R(t))
 
 plt.plot(x, y)
-plt.title("Reliability for time (one employee)")
+plt.title("Reliability for time")
 plt.xlabel("Time")
 plt.ylabel("Reliability")
+plt.grid()
 plt.show()
 
 print(R(t)[60])
+
+
+

@@ -1,4 +1,4 @@
 # PYSE
-TTM4110 - LAB 2 
+TTM4110 - LABS
 
-Code for simulating a grocery store using simpy.
+Code for simulating a grocery store using simpy and analytic models.
